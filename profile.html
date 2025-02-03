@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Country Profiles</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #e3f2fd;
+            display: flex;
+            justify-content: flex-start;
+            align-items: flex-start;
+            flex-direction: column;
+            height: 100vh;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        h1 {
+            color: #007bff;
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #profiles {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .profile-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 300px;
+            display: inline-block;
+            box-sizing: border-box;
+        }
+        .profile-container img {
+            width: 100px;
+            height: 60px;
+            object-fit: cover;
+            margin-bottom: 20px;
+        }
+        .profile-container h2 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .profile-container p {
+            color: #555;
+            font-size: 16px;
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Select Country</h1>
+    
+    <!-- Buttons to switch between India and Australia -->
+    <button id="indiaButton">India</button>
+    <button id="australiaButton">Australia</button>
+
+    <!-- Container for country profiles -->
+    <div id="profiles"></div>
+
+    <script>
+        // Function to fetch country data and display profile
+        function fetchCountryData(country) {
+            const url = `https://restcountries.com/v3.1/name/${country}?fullText=true`;
+
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to load country data');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Clear existing profiles
+                    const profilesContainer = document.getElementById("profiles");
+                    profilesContainer.innerHTML = "";
+
+                    // Loop through the country data and create profile elements
+                    data.forEach(country => {
+                        const profileDiv = document.createElement("div");
+                        profileDiv.classList.add("profile-container");
+
+                        // Flag of the country
+                        const flag = document.createElement("img");
+                        flag.src = country.flags[0];
+                        flag.alt = `${country.name.common} flag`;
+
+                        // Name of the country
+                        const name = document.createElement("h2");
+                        name.textContent = country.name.common;
+
+                        // Region of the country
+                        const region = document.createElement("p");
+                        region.innerHTML = `<strong>Region:</strong> ${country.region}`;
+
+                        // Area of the country
+                        const area = document.createElement("p");
+                        area.innerHTML = `<strong>Area:</strong> ${country.area} km²`;
+
+                        // Borders of the country
+                        const borders = document.createElement("p");
+                        borders.innerHTML = `<strong>Borders:</strong> ${country.borders ? country.borders.join(", ") : "No borders"}`;
+
+                        // Append all elements to the profile container
+                        profileDiv.appendChild(flag);
+                        profileDiv.appendChild(name);
+                        profileDiv.appendChild(region);
+                        profileDiv.appendChild(area);
+                        profileDiv.appendChild(borders);
+
+                        // Append the profile container to the profiles container
+                        profilesContainer.appendChild(profileDiv);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error loading country data:', error);
+                    alert("Failed to load country data. Please try again.");
+                });
+        }
+
+        // Event listeners for the buttons
+        document.getElementById("indiaButton").addEventListener("click", function() {
+            fetchCountryData("india");
+        });
+
+        document.getElementById("australiaButton").addEventListener("click", function() {
+            fetchCountryData("australia");
+        });
+    </script>
+</body>
+</html>
